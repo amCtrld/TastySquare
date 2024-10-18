@@ -1,21 +1,42 @@
-import React, { useState } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import React, { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { HiOutlineChevronDown } from 'react-icons/hi'; // Import filter icon
 
 const data = {
     daily: [
+        { name: '00:00', value: 10 },
+        { name: '01:00', value: 20 },
+        { name: '02:00', value: 15 },
+        { name: '03:00', value: 30 },
+        { name: '04:00', value: 25 },
+        { name: '05:00', value: 40 },
+        { name: '06:00', value: 35 },
+        { name: '07:00', value: 20 },
+        { name: '08:00', value: 25 },
+        { name: '09:00', value: 50 },
+        { name: '10:00', value: 35 },
+        { name: '11:00', value: 45 },
+        { name: '12:00', value: 55 },
+        { name: '13:00', value: 60 },
+        { name: '14:00', value: 65 },
+        { name: '15:00', value: 70 },
+        { name: '16:00', value: 55 },
+        { name: '17:00', value: 50 },
+        { name: '18:00', value: 40 },
+        { name: '19:00', value: 35 },
+        { name: '20:00', value: 45 },
+        { name: '21:00', value: 50 },
+        { name: '22:00', value: 40 },
+        { name: '23:00', value: 30 },
+    ],
+    weekly: [
         { name: 'Mon', value: 20 },
         { name: 'Tue', value: 30 },
-        { name: 'Wed', value: 25 },
+        { name: 'Web', value: 25 },
         { name: 'Thu', value: 40 },
         { name: 'Fri', value: 35 },
         { name: 'Sat', value: 50 },
         { name: 'Sun', value: 45 },
-    ],
-    weekly: [
-        { name: 'Week 1', value: 200 },
-        { name: 'Week 2', value: 250 },
-        { name: 'Week 3', value: 180 },
-        { name: 'Week 4', value: 220 },
     ],
     monthly: [
         { name: 'Jan', value: 65 },
@@ -25,44 +46,75 @@ const data = {
         { name: 'May', value: 56 },
         { name: 'Jun', value: 55 },
         { name: 'Jul', value: 40 },
+        { name: 'Aug', value: 75 },
+        { name: 'Sep', value: 90 },
+        { name: 'Oct', value: 85 },
+        { name: 'Nov', value: 60 },
+        { name: 'Dec', value: 70 },
     ],
-}
+};
 
 export default function RevenueChart() {
-    const [timeRange, setTimeRange] = useState('monthly')
+    const [timeRange, setTimeRange] = useState('monthly');
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to control accordion open/close
+
+    const toggleAccordion = () => {
+        setIsAccordionOpen(!isAccordionOpen);
+    };
 
     return (
-        <div className="bg-gray-800 p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Total Revenue</h2>
-            <div className="mb-4">
-                <button
-                    className={`mr-2 px-3 py-1 rounded ${timeRange === 'daily' ? 'bg-blue-500' : 'bg-gray-700'}`}
-                    onClick={() => setTimeRange('daily')}
-                >
-                    Daily
-                </button>
-                <button
-                    className={`mr-2 px-3 py-1 rounded ${timeRange === 'weekly' ? 'bg-blue-500' : 'bg-gray-700'}`}
-                    onClick={() => setTimeRange('weekly')}
-                >
-                    Weekly
-                </button>
-                <button
-                    className={`px-3 py-1 rounded ${timeRange === 'monthly' ? 'bg-blue-500' : 'bg-gray-700'}`}
-                    onClick={() => setTimeRange('monthly')}
-                >
-                    Monthly
-                </button>
+        <div className="bg-gray-50 p-4 rounded-lg relative">
+            <h2 className="text-xl font-semibold mb-4 text-purple-950">Total Revenue</h2>
+
+            {/* Filter icon */}
+            <div className="absolute right-4 top-4">
+                <HiOutlineChevronDown
+                    className="text-2xl cursor-pointer text-purple-900"
+                    onClick={toggleAccordion}
+                />
             </div>
+
+            {/* Accordion buttons */}
+            <div
+                className={`overflow-hidden relative transition-all duration-300 ease-in-out ${
+                    isAccordionOpen ? 'max-h-32' : 'max-h-0'
+                }`}
+                style={{ transitionProperty: 'max-height' }}
+            >
+                <div className="absolute right-4 top-4 flex space-x-2">
+                    <button
+                        className={`px-3 py-1 rounded ${timeRange === 'daily' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
+                        onClick={() => setTimeRange('daily')}
+                    >
+                        Daily
+                    </button>
+                    <button
+                        className={`px-3 py-1 rounded ${timeRange === 'weekly' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
+                        onClick={() => setTimeRange('weekly')}
+                    >
+                        Weekly
+                    </button>
+                    <button
+                        className={`px-3 py-1 rounded ${timeRange === 'monthly' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
+                        onClick={() => setTimeRange('monthly')}
+                    >
+                        Monthly
+                    </button>
+                </div>
+            </div>
+
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data[timeRange]}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#4ade80" />
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#d9d2e9" />
+                    <XAxis dataKey="name" stroke="#8e7cc3" />
+                    <YAxis stroke="#8e7cc3" />
+                    <Tooltip
+                        cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
+                        contentStyle={{ backgroundColor: '#2d3748', borderRadius: '5px', border: 'none', color: '#fff' }}
+                    />
+                    <Bar dataKey="value" fill="#351c75" barSize={10} radius={[10, 10, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </div>
-    )
+    );
 }

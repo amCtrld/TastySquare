@@ -9,10 +9,9 @@ import AddOrderButton from '../components/AddOrderButton'
 
 export default function Dashboard() {
     return (
-        <div className="flex h-screen bg-gray-900 text-white">
+        <div className="flex h-screen bg-purple-200 text-white">
             <Sidebar />
             <div className="flex-1 p-8 overflow-auto">
-                <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
                 <StockOverview />
                 <div className="grid grid-cols-2 gap-8 mb-8">
                     <RevenueChart />
