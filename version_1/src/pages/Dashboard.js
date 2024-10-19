@@ -15,13 +15,12 @@ export default function Dashboard() {
                 <StockOverview />
                 <div className="grid grid-cols-2 gap-8 mb-8">
                     <RevenueChart />
-                    <OrdersChart />
+                    <RecentOrders>
+                        <AddOrderButton /> {/* AddOrderButton passed as a child */}
+                    </RecentOrders>
                 </div>
                 <div className="grid grid-cols-2 gap-8">
-                    <div>
-                        <RecentOrders />
-                        <AddOrderButton />
-                    </div>
+                    <OrdersChart />
                     <TopSellingItems />
                 </div>
             </div>

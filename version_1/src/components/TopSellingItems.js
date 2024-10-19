@@ -1,7 +1,7 @@
 import React from 'react';
 
 const TopSellingRow = ({ item, totalUnits, leftUnits }) => (
-    <tr className="bg-gray-100 odd:bg-gray-200">
+    <tr className="bg-purple-200 odd:bg-purple-300">
         <td className="p-2">{item}</td>
         <td className="p-2">{totalUnits}</td>
         <td className="p-2">{leftUnits}</td>
@@ -13,6 +13,8 @@ export default function TopSellingItems() {
         { item: 'Chicken Pilau', totalUnits: 14, leftUnits: 6 },
         { item: 'Chicken Chips', totalUnits: 12, leftUnits: 8 },
         { item: 'Mountain Dew', totalUnits: 11, leftUnits: 13 },
+        { item: 'Chapati', totalUnits: 11, leftUnits: 13 },
+        { item: 'Doughnuts', totalUnits: 11, leftUnits: 13 },
     ];
 
     return (
@@ -26,7 +28,7 @@ export default function TopSellingItems() {
                     <th className="text-left text-gray-500 p-2">Left Units</th>
                 </tr>
                 </thead>
-                <tbody className="text-black font-sans font-medium">
+                <tbody className="text-black font-serif font-medium">
                 {items.map((item) => (
                     <TopSellingRow key={item.item} {...item} />
                 ))}

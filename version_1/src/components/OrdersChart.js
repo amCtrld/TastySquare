@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { HiOutlineChevronDown } from 'react-icons/hi'; // Import filter icon
 
 const data = {
     daily: [
@@ -55,30 +56,55 @@ const data = {
 
 export default function OrdersChart() {
     const [timeRange, setTimeRange] = useState('monthly');
+    const [isAccordionOpen, setIsAccordionOpen] = useState(false); // State to control accordion open/close
+
+    const toggleAccordion = () => {
+        setIsAccordionOpen(!isAccordionOpen);
+    };
 
     return (
         <div className="bg-gray-50 p-4 rounded-lg relative">
             <h2 className="text-xl font-semibold mb-4 text-purple-950">Total Orders</h2>
+
+            {/* Filter icon */}
             <div className="absolute right-4 top-4 flex space-x-2">
-                <button
-                    className={`mr-2 px-3 py-1 rounded ${timeRange === 'daily' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
-                    onClick={() => setTimeRange('daily')}
-                >
-                    Daily
-                </button>
-                <button
-                    className={`mr-2 px-3 py-1 rounded ${timeRange === 'weekly' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
-                    onClick={() => setTimeRange('weekly')}
-                >
-                    Weekly
-                </button>
-                <button
-                    className={`px-3 py-1 rounded ${timeRange === 'monthly' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
-                    onClick={() => setTimeRange('monthly')}
-                >
-                    Monthly
-                </button>
+                <p className="text-sm font-medium text-purple-950">Filter</p>
+                <HiOutlineChevronDown
+                    className="text-lg cursor-pointer text-purple-900"
+                    onClick={toggleAccordion}
+                />
             </div>
+
+            {/* Accordion buttons */}
+            <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isAccordionOpen ? 'max-h-32' : 'max-h-0'
+                }`}
+                style={{ transitionProperty: 'max-height' }}
+            >
+                <div className="flex justify-end space-x-2 mt-4">
+                    <button
+                        className={`px-3 py-1 rounded ${timeRange === 'daily' ? 'bg-purple-900 text-white' : 'border-purple-950 text-purple-900 hover:bg-gray-600'}`}
+                        onClick={() => setTimeRange('daily')}
+                    >
+                        Daily
+                    </button>
+                    <button
+                        className={`px-3 py-1 rounded ${timeRange === 'weekly' ? 'bg-purple-900 text-white' : 'border-purple-950 text-purple-900 hover:bg-gray-600'}`}
+                        onClick={() => setTimeRange('weekly')}
+                    >
+                        Weekly
+                    </button>
+                    <button
+                        className={`px-3 py-1 rounded ${timeRange === 'monthly' ? 'bg-purple-900 text-white' : 'border-purple-950 text-purple-900 hover:bg-gray-600'}`}
+                        onClick={() => setTimeRange('monthly')}
+                    >
+                        Monthly
+                    </button>
+                </div>
+            </div>
+
+            {/* Line Chart */}
             <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={data[timeRange]}>
                     <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#d9d2e9" />

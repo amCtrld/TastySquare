@@ -8,7 +8,7 @@ const OrderRow = ({ id, date, time, amount, initialStatus }) => {
     };
 
     return (
-        <tr className="bg-gray-100 odd:bg-gray-200">
+        <tr className="bg-purple-200 odd:bg-purple-300">
             <td className="p-2">{id}</td>
             <td className="p-2">{date}</td>
             <td className="p-2">{time}</td>
@@ -31,7 +31,7 @@ const OrderRow = ({ id, date, time, amount, initialStatus }) => {
     );
 };
 
-export default function RecentOrders() {
+export default function RecentOrders({ children }) {
     const orders = [
         { id: '#056', date: '12/10/2024', time: '11:30 a.m.', amount: 'Kes. 150', status: 'Open' },
         { id: '#055', date: '12/10/2024', time: '11:21 a.m.', amount: 'Kes. 230', status: 'Open' },
@@ -51,12 +51,13 @@ export default function RecentOrders() {
                     <th className="text-left text-gray-500 p-2">Status</th>
                 </tr>
                 </thead>
-                <tbody className="text-black font-sans font-medium">
+                <tbody className="text-black font-serif font-medium">
                 {orders.map((order) => (
                     <OrderRow key={order.id} {...order} initialStatus={order.status} />
                 ))}
                 </tbody>
             </table>
+            {children} {/* Render the AddOrderButton here */}
         </div>
     );
 }

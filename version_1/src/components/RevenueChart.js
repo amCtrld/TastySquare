@@ -67,35 +67,36 @@ export default function RevenueChart() {
             <h2 className="text-xl font-semibold mb-4 text-purple-950">Total Revenue</h2>
 
             {/* Filter icon */}
-            <div className="absolute right-4 top-4">
+            <div className="absolute right-4 top-4 flex space-x-2">
+                <p className="text-sm font-medium text-purple-950">Filter</p>
                 <HiOutlineChevronDown
-                    className="text-2xl cursor-pointer text-purple-900"
+                    className="text-lg cursor-pointer text-purple-900"
                     onClick={toggleAccordion}
                 />
             </div>
 
             {/* Accordion buttons */}
             <div
-                className={`overflow-hidden relative transition-all duration-300 ease-in-out ${
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
                     isAccordionOpen ? 'max-h-32' : 'max-h-0'
                 }`}
                 style={{ transitionProperty: 'max-height' }}
             >
-                <div className="absolute right-4 top-4 flex space-x-2">
+                <div className="flex justify-end space-x-2 mt-4">
                     <button
-                        className={`px-3 py-1 rounded ${timeRange === 'daily' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
+                        className={`px-3 py-1 rounded ${timeRange === 'daily' ? 'bg-purple-900 text-white' : 'border-purple-950 text-purple-900 hover:bg-gray-600'}`}
                         onClick={() => setTimeRange('daily')}
                     >
                         Daily
                     </button>
                     <button
-                        className={`px-3 py-1 rounded ${timeRange === 'weekly' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
+                        className={`px-3 py-1 rounded ${timeRange === 'weekly' ? 'bg-purple-900 text-white' : 'border-purple-950 text-purple-900 hover:bg-gray-600'}`}
                         onClick={() => setTimeRange('weekly')}
                     >
                         Weekly
                     </button>
                     <button
-                        className={`px-3 py-1 rounded ${timeRange === 'monthly' ? 'bg-purple-900 text-white rounded-full' : 'border border-purple-950 rounded-full text-purple-900 hover:bg-gray-600'}`}
+                        className={`px-3 py-1 rounded ${timeRange === 'monthly' ? 'bg-purple-900 text-white' : 'border-purple-950 text-purple-900 hover:bg-gray-600'}`}
                         onClick={() => setTimeRange('monthly')}
                     >
                         Monthly
