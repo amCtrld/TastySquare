@@ -1,164 +1,195 @@
-import React, { useState } from 'react'
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import React, { useState } from 'react';
 
-// Mock data for orders
-const mockOrders = [
-    { id: '#056', date: '2024-10-12', time: '11:30', amount: 150, status: 'Open', details: { burgers: 3, steaks: 5, milkshakes: 4 } },
-    { id: '#055', date: '2024-10-12', time: '11:21', amount: 230, status: 'Open', details: { burgers: 2, steaks: 2, milkshakes: 3 } },
-    { id: '#054', date: '2024-10-12', time: '11:11', amount: 100, status: 'Closed', details: { burgers: 1, steaks: 3, milkshakes: 1 } },
-    { id: '#053', date: '2024-10-11', time: '15:45', amount: 180, status: 'Open', details: { burgers: 4, steaks: 6, milkshakes: 5 } },
-    { id: '#052', date: '2024-10-11', time: '14:30', amount: 90, status: 'Closed', details: { burgers: 2, steaks: 1, milkshakes: 2 } },
-]
+// Example orders data
+const ordersData = [
+    { id: '#056', items: [{ name: 'Burger', quantity: 3 }, { name: 'Steak', quantity: 5 }, { name: 'Milkshake', quantity: 4 }], status: 'Open' },
+    { id: '#055', items: [{ name: 'Pizza', quantity: 2 }, { name: 'Fries', quantity: 6 }, { name: 'Cola', quantity: 3 }], status: 'Open' },
+    { id: '#054', items: [{ name: 'Pasta', quantity: 1 }, { name: 'Salad', quantity: 3 }, { name: 'Water', quantity: 2 }], status: 'Closed' },
+    // Add more orders to demonstrate pagination
+    { id: '#053', items: [{ name: 'Taco', quantity: 5 }, { name: 'Juice', quantity: 2 }], status: 'Open' },
+    { id: '#052', items: [{ name: 'Burger', quantity: 4 }], status: 'Closed' },
+    { id: '#051', items: [{ name: 'Steak', quantity: 1 }], status: 'Open' },
+    { id: '#050', items: [{ name: 'Milkshake', quantity: 3 }], status: 'Closed' },
+    { id: '#049', items: [{ name: 'Pizza', quantity: 6 }], status: 'Open' },
+    { id: '#048', items: [{ name: 'Fries', quantity: 3 }, { name: 'Cola', quantity: 1 }], status: 'Open' },
+    { id: '#047', items: [{ name: 'Pasta', quantity: 2 }, { name: 'Salad', quantity: 1 }], status: 'Closed' },
+    // Add enough rows for demonstration of pagination (feel free to add more)
+    { id: '#046', items: [{ name: 'Juice', quantity: 3 }, { name: 'Burger', quantity: 2 }], status: 'Open' },
+    { id: '#045', items: [{ name: 'Steak', quantity: 1 }], status: 'Closed' },
+    { id: '#044', items: [{ name: 'Fries', quantity: 6 }], status: 'Open' },
+    { id: '#043', items: [{ name: 'Milkshake', quantity: 2 }], status: 'Closed' },
+    { id: '#042', items: [{ name: 'Pizza', quantity: 4 }], status: 'Open' },
+    { id: '#041', items: [{ name: 'Water', quantity: 2 }], status: 'Closed' },
+];
 
-// OrderRow component to toggle order status and click to view details
-const OrderRow = ({ id, date, time, amount, status, details, onSelectOrder }) => {
-    const [orderStatus, setOrderStatus] = useState(status)
-
-    const toggleStatus = () => {
-        setOrderStatus(orderStatus === 'Open' ? 'Closed' : 'Open')
-    }
-
-    return (
-        <tr className="border-b border-gray-700">
-            <td className="p-3 cursor-pointer" onClick={() => onSelectOrder({ id, date, time, amount, details })}>
-                {id}
-            </td>
-            <td className="p-3">{date}</td>
-            <td className="p-3">{time}</td>
-            <td className="p-3">Kes. {amount}</td>
-            <td className="p-3">
+// Order Row component
+const OrderRow = ({ id, onClick, status, toggleStatus }) => (
+    <tr className="bg-purple-200 odd:bg-purple-300 cursor-pointer">
+        <td className="p-2" onClick={() => onClick(id)}>{id}</td>
+        <td className="p-2">12/10/2024</td> {/* Example date */}
+        <td className="p-2">11:30 a.m.</td>  {/* Example time */}
+        <td className="p-2">Kes. 150</td>   {/* Example amount */}
+        <td className="p-2">
+            <div
+                className={`relative w-14 h-7 flex items-center rounded-full p-1 cursor-pointer transition-all duration-300 ${
+                    status === 'Open' ? 'bg-red-500' : 'bg-green-500'
+                }`}
+                onClick={toggleStatus}
+            >
                 <div
-                    className={`relative w-14 h-7 flex items-center rounded-full p-1 cursor-pointer transition-all duration-300 ${
-                        orderStatus === 'Open' ? 'bg-red-500' : 'bg-green-500'
+                    className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                        status === 'Open' ? 'translate-x-0' : 'translate-x-7'
                     }`}
-                    onClick={toggleStatus}
-                >
-                    <div
-                        className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                            orderStatus === 'Open' ? 'translate-x-0' : 'translate-x-7'
-                        }`}
-                    />
-                </div>
-            </td>
-        </tr>
-    )
-}
+                />
+            </div>
+        </td>
+    </tr>
+);
 
-// Main Orders component with table and order details card
-export default function Orders() {
-    const [orders, setOrders] = useState(mockOrders)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [ordersPerPage] = useState(5)
-    const [searchTerm, setSearchTerm] = useState('')
-    const [selectedOrder, setSelectedOrder] = useState(null)
-
-    // Filtering function
-    const filteredOrders = orders.filter(order =>
-        Object.values(order).some(value =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    )
-
-    // Pagination
-    const indexOfLastOrder = currentPage * ordersPerPage
-    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage
-    const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder)
-
-    const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
-    const handleOrderClick = (order) => {
-        setSelectedOrder(order)
+// Order Details Card component
+const OrderDetailsCard = ({ selectedOrder }) => {
+    if (!selectedOrder) {
+        return (
+            <div className="p-4 bg-gray-100 text-gray-500 text-center">
+                Select an order to view its details
+            </div>
+        );
     }
 
     return (
-        <div className="flex flex-row p-8 gap-8">
-            {/* Orders Table */}
-            <div className="flex-1 bg-gray-800 rounded-lg p-4 overflow-auto">
-                <h1 className="text-3xl font-bold mb-8">Orders</h1>
-
-                {/* Search bar */}
-                <div className="mb-4 relative">
-                    <input
-                        type="text"
-                        placeholder="Search orders..."
-                        className="w-full p-2 pl-10 bg-gray-800 rounded-lg text-gray-200"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
-                </div>
-
-                {/* Orders table */}
-                <table className="w-full">
+        <div className="p-6 bg-white shadow-lg rounded-md">
+            <div className="bg-gray-300 p-4 rounded-t-md text-center font-bold text-lg">
+                OrderID: {selectedOrder.id}
+            </div>
+            <div className="p-4">
+                <h2 className="text-lg font-semibold mb-2">Order Details</h2>
+                <table className="w-full text-left">
                     <thead>
-                    <tr className="bg-gray-700">
-                        <th className="p-3 text-left">Order ID</th>
-                        <th className="p-3 text-left">Date</th>
-                        <th className="p-3 text-left">Time</th>
-                        <th className="p-3 text-left">Amount</th>
-                        <th className="p-3 text-left">Status</th>
+                    <tr>
+                        <th className="font-bold">Items</th>
+                        <th className="font-bold text-right">Quantity</th>
                     </tr>
                     </thead>
                     <tbody>
+                    {selectedOrder.items.map((item, index) => (
+                        <tr key={index} className="border-t">
+                            <td className="py-2">{item.name}</td>
+                            <td className="py-2 text-right">{item.quantity}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+// Main Orders Page component
+export default function Orders() {
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [orders, setOrders] = useState(ordersData);
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 15;
+
+    // Handle clicking on an order row to display its details
+    const handleOrderClick = (id) => {
+        const order = orders.find((order) => order.id === id);
+        setSelectedOrder(order);
+    };
+
+    // Handle toggling the status of an order
+    const toggleStatus = (id) => {
+        const updatedOrders = orders.map((order) =>
+            order.id === id
+                ? { ...order, status: order.status === 'Open' ? 'Closed' : 'Open' }
+                : order
+        );
+        setOrders(updatedOrders);
+    };
+
+    // Calculate total pages
+    const totalPages = Math.ceil(orders.length / rowsPerPage);
+
+    // Get orders for current page
+    const currentOrders = orders.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+    );
+
+    // Handle pagination change
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    return (
+        <div className="flex p-4">
+            {/* Orders Table */}
+            <div className="w-2/3 pr-4">
+                <h2 className="text-xl font-semibold mb-4 text-purple-950">Orders</h2>
+                <table className="w-full table-auto border-separate border-spacing-y-2">
+                    <thead>
+                    <tr>
+                        <th className="text-left text-gray-500 p-2">Order ID</th>
+                        <th className="text-left text-gray-500 p-2">Date</th>
+                        <th className="text-left text-gray-500 p-2">Time</th>
+                        <th className="text-left text-gray-500 p-2">Amount</th>
+                        <th className="text-left text-gray-500 p-2">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody className="text-black font-serif font-medium">
                     {currentOrders.map((order) => (
                         <OrderRow
                             key={order.id}
-                            {...order}
-                            onSelectOrder={handleOrderClick}
+                            id={order.id}
+                            status={order.status}
+                            onClick={handleOrderClick}
+                            toggleStatus={() => toggleStatus(order.id)}
                         />
                     ))}
                     </tbody>
                 </table>
-
-                {/* Pagination */}
-                <div className="mt-4 flex justify-between items-center">
-                    <div>
-                        Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, filteredOrders.length)} of {filteredOrders.length} entries
-                    </div>
-                    <div className="flex">
-                        <button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-3 py-1 bg-gray-700 rounded-l-lg disabled:opacity-50"
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-                        {Array.from({ length: Math.ceil(filteredOrders.length / ordersPerPage) }).map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => paginate(index + 1)}
-                                className={`px-3 py-1 ${currentPage === index + 1 ? 'bg-blue-500' : 'bg-gray-700'}`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === Math.ceil(filteredOrders.length / ordersPerPage)}
-                            className="px-3 py-1 bg-gray-700 rounded-r-lg disabled:opacity-50"
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
+                {/* Pagination Controls */}
+                <div className="flex justify-between items-center mt-4">
+                    <button
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                        className={`px-4 py-2 rounded-md ${
+                            currentPage === 1
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-purple-500 text-white'
+                        }`}
+                    >
+                        Previous
+                    </button>
+                    <span>
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        className={`px-4 py-2 rounded-md ${
+                            currentPage === totalPages
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-purple-500 text-white'
+                        }`}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
 
-            {/* Order Details Card */}
-            {selectedOrder && (
-                <div className="w-1/3 bg-gray-800 rounded-lg p-4 text-white">
-                    <h2 className="text-2xl font-bold mb-4">Order Details</h2>
-                    <p><strong>Order ID:</strong> {selectedOrder.id}</p>
-                    <p><strong>Date:</strong> {selectedOrder.date}</p>
-                    <p><strong>Time:</strong> {selectedOrder.time}</p>
-                    <p><strong>Amount:</strong> Kes. {selectedOrder.amount}</p>
-                    <div className="mt-4">
-                        <h3 className="text-xl font-semibold mb-2">Items Ordered:</h3>
-                        <p>Burgers: {selectedOrder.details.burgers}</p>
-                        <p>Steaks: {selectedOrder.details.steaks}</p>
-                        <p>Milkshakes: {selectedOrder.details.milkshakes}</p>
-                    </div>
-                </div>
-            )}
+            {/* Order Details */}
+            <div className="w-1/3">
+                <OrderDetailsCard selectedOrder={selectedOrder} />
+            </div>
         </div>
-    )
+    );
 }

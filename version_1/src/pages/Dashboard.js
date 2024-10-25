@@ -8,7 +8,7 @@ import AddOrderButton from '../components/AddOrderButton'
 
 export default function Dashboard() {
     return (
-        <div className="flex-1 p-8 overflow-auto">
+        <div className="flex-1 p-8 overflow-auto bg-purple-200">
             <StockOverview />
             <div className="grid grid-cols-2 gap-8 mb-8">
                 <RevenueChart />
